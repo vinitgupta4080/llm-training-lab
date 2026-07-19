@@ -6,7 +6,7 @@ This is the authoritative resume point. Update it after every meaningful learnin
 
 - Current module: Module 1 — text and tokenization
 - Status: in progress
-- Next action: publish the initial course checkpoint to the learner's public GitHub repository, then run a multilingual BPE round-trip comparison
+- Next action: run a multilingual BPE round-trip and token-count comparison using a merge-aware tokenizer
 - Last verified: 2026-07-18; repeated BPE exercise and 14 automated tests passing
 
 ## Module scoreboard
@@ -321,6 +321,15 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
 - Confirmed generated environments, caches, checkpoints, downloaded data, and run outputs are
   excluded by `.gitignore`.
 - Next: create the public GitHub repository under `vinitgupta4080` and publish this checkpoint.
+
+### 2026-07-19 — Initial public checkpoint published
+
+- Created the public repository `vinitgupta4080/llm-training-lab` through GitHub's web interface.
+- Published all 49 tracked project files individually through the signed-in `vinitgupta4080`
+  web editor after the local Git credential resolved to a forbidden account.
+- Added durable workspace and project rules that prohibit publishing through
+  `vinitgupta-alation`; stored credentials were not changed.
+- Next: resume Module 1 with a multilingual BPE round-trip and token-count comparison.
 - Added assertions using byte IDs for `banana`.
 - Next: implement pair counting and proceed one failing assertion at a time.
 
