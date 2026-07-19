@@ -1,0 +1,5 @@
+Language models learn patterns by predicting the next token.
+Attention lets each position combine information from earlier positions.
+Small experiments make invisible training dynamics easier to see.
+Measure, predict, change one variable, and explain the result.
+
