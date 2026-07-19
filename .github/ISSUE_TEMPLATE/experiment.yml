@@ -1,0 +1,34 @@
+name: Experiment
+description: Plan one controlled what-if investigation
+title: "experiment: "
+labels: ["experiment"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: What-if question
+      description: State one precise technical question.
+    validations:
+      required: true
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Mechanistic hypothesis and falsifier
+      description: Predict why and state what observation would disprove the explanation.
+    validations:
+      required: true
+  - type: textarea
+    id: variables
+    attributes:
+      label: Variables and controls
+      description: Identify the independent variable, dependent metrics, controls, and seeds.
+    validations:
+      required: true
+  - type: textarea
+    id: completion
+    attributes:
+      label: Completion evidence
+      description: List required tests, plots/tables, profiling, and failure analysis.
+    validations:
+      required: true
+
