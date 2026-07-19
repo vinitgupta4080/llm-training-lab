@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-training-lab"
+version = "0.1.0"
+description = "Learn LLM training and tuning by implementing the internals"
+requires-python = ">=3.11"
+dependencies = ["torch>=2.2", "numpy>=1.26", "tqdm>=4.66"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5"]
+advanced = ["datasets>=2.20", "transformers>=4.42", "accelerate>=0.31", "peft>=0.11"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
