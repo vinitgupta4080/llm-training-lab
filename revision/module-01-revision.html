@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>Module 01 Revision Hub</title>
+<title>Module 01 Checkpoint</title>
 <style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;max-width:736px;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
 </head>
 <body>
-<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="Module 01 Revision Hub" srcdoc="&lt;!doctype html&gt;
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="Module 01 Checkpoint" srcdoc="&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
 &lt;meta charset=&quot;utf-8&quot;&gt;
 &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
 &lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
 &lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
-&lt;title&gt;Module 01 Revision Hub&lt;/title&gt;
+&lt;title&gt;Module 01 Checkpoint&lt;/title&gt;
 &lt;style&gt;:root {
   color-scheme: light dark;
   background-color: var(--background) !important;
@@ -748,32 +748,81 @@ svg {
 html&gt;body{padding:0}&lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
-&lt;div id=&quot;module01-hub&quot;&gt;
-  &lt;div class=&quot;viz-row&quot; style=&quot;justify-content:center;margin-bottom:1rem;&quot;&gt;
-    &lt;button class=&quot;btn btn-secondary&quot; type=&quot;button&quot; data-topic=&quot;0&quot;&gt;Why tokens&lt;/button&gt;&lt;button class=&quot;btn btn-secondary&quot; type=&quot;button&quot; data-topic=&quot;1&quot;&gt;Unicode&lt;/button&gt;&lt;button class=&quot;btn btn-secondary&quot; type=&quot;button&quot; data-topic=&quot;2&quot;&gt;Byte tokens&lt;/button&gt;&lt;button class=&quot;btn btn-secondary&quot; type=&quot;button&quot; data-topic=&quot;3&quot;&gt;Why BPE&lt;/button&gt;&lt;button class=&quot;btn btn-secondary&quot; type=&quot;button&quot; data-topic=&quot;4&quot;&gt;BPE training&lt;/button&gt;&lt;button class=&quot;btn btn-secondary&quot; type=&quot;button&quot; data-topic=&quot;5&quot;&gt;Use tokenizer&lt;/button&gt;&lt;button class=&quot;btn btn-secondary&quot; type=&quot;button&quot; data-topic=&quot;6&quot;&gt;Tradeoffs&lt;/button&gt;
+&lt;div id=&quot;module01-checkpoint&quot;&gt;
+  &lt;div class=&quot;viz-controls&quot; aria-label=&quot;Module 1 revision topic&quot;&gt;
+    &lt;button class=&quot;btn&quot; data-topic=&quot;0&quot; aria-pressed=&quot;true&quot;&gt;Bytes&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; data-topic=&quot;1&quot; aria-pressed=&quot;false&quot;&gt;Train BPE&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; data-topic=&quot;2&quot; aria-pressed=&quot;false&quot;&gt;Encode&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; data-topic=&quot;3&quot; aria-pressed=&quot;false&quot;&gt;Decode&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; data-topic=&quot;4&quot; aria-pressed=&quot;false&quot;&gt;Coverage&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; data-topic=&quot;5&quot; aria-pressed=&quot;false&quot;&gt;Cost&lt;/button&gt;
   &lt;/div&gt;
-  &lt;div class=&quot;viz-grid&quot;&gt;&lt;div class=&quot;card viz-stat&quot;&gt;&lt;div class=&quot;text-muted&quot;&gt;Topic&lt;/div&gt;&lt;div id=&quot;m1-topic&quot; class=&quot;viz-stat-value&quot;&gt;Why tokens&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;card viz-stat&quot;&gt;&lt;div class=&quot;text-muted&quot;&gt;Core rule&lt;/div&gt;&lt;div id=&quot;m1-rule&quot; class=&quot;viz-stat-value&quot;&gt;text must become IDs&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class=&quot;card&quot; style=&quot;margin-top:.75rem;&quot;&gt;
-    &lt;div&gt;&lt;span class=&quot;text-muted&quot;&gt;Why · &lt;/span&gt;&lt;span id=&quot;m1-why&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;margin-top:.5rem;&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;Plain English · &lt;/span&gt;&lt;span id=&quot;m1-plain&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;margin-top:.5rem;&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;Technical · &lt;/span&gt;&lt;span id=&quot;m1-technical&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;margin-top:.5rem;&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;Benefit · &lt;/span&gt;&lt;span id=&quot;m1-benefit&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;margin-top:.5rem;&quot;&gt;&lt;span class=&quot;text-muted&quot;&gt;Cost / risk · &lt;/span&gt;&lt;span id=&quot;m1-cost&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;card&quot; aria-live=&quot;polite&quot;&gt;
+    &lt;div class=&quot;text-small&quot; id=&quot;m1c-name&quot;&gt;&lt;/div&gt;
+    &lt;div id=&quot;m1c-rule&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;viz-row&quot; id=&quot;m1c-flow&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;text-small&quot; id=&quot;m1c-detail&quot;&gt;&lt;/div&gt;
   &lt;/div&gt;
-  &lt;svg id=&quot;m1-svg&quot; viewBox=&quot;0 0 720 245&quot; role=&quot;img&quot; aria-label=&quot;Selected tokenization concept&quot; style=&quot;display:block;width:100%;height:auto;margin-top:1rem;color:var(--foreground);&quot;&gt;&lt;/svg&gt;
-  &lt;div class=&quot;card&quot; style=&quot;margin-top:.75rem;&quot;&gt;&lt;div class=&quot;text-muted&quot;&gt;Quick check&lt;/div&gt;&lt;div id=&quot;m1-question&quot; style=&quot;margin-top:.5rem;&quot;&gt;&lt;/div&gt;&lt;div id=&quot;m1-answers&quot; class=&quot;viz-row&quot; style=&quot;margin-top:.75rem;&quot;&gt;&lt;/div&gt;&lt;div id=&quot;m1-feedback&quot; aria-live=&quot;polite&quot; style=&quot;margin-top:.75rem;&quot;&gt;Choose an answer.&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;card&quot;&gt;
+    &lt;div id=&quot;m1c-question&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;viz-row&quot; id=&quot;m1c-answers&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;text-small&quot; id=&quot;m1c-feedback&quot;&gt;Choose an answer.&lt;/div&gt;
+  &lt;/div&gt;
 &lt;/div&gt;
+&lt;style&gt;
+  #module01-checkpoint { display:grid; gap:var(--space-3); }
+  #module01-checkpoint .card { display:grid; gap:var(--space-3); }
+  #m1c-flow { justify-content:flex-start; }
+  #m1c-flow span { padding:var(--space-2) var(--space-3); border-radius:var(--radius); background:color-mix(in srgb, var(--viz-series-1) 16%, transparent); }
+  #m1c-detail, #m1c-feedback { color:var(--muted-foreground); }
+&lt;/style&gt;
 &lt;script&gt;
 (() =&gt; {
-  const root=document.getElementById(&#x27;module01-hub&#x27;),svg=root.querySelector(&#x27;#m1-svg&#x27;),ns=&#x27;http://www.w3.org/2000/svg&#x27;;
-  const topics=[
-    {name:&#x27;Why tokens&#x27;,rule:&#x27;text must become IDs&#x27;,why:&#x27;Neural networks compute on numeric tensors, not strings.&#x27;,plain:&#x27;The tokenizer translates between human text and the model’s numbered dictionary.&#x27;,technical:&#x27;text → token IDs [B,T] → embedding lookup → hidden vectors [B,T,C]. IDs are indices, not magnitudes.&#x27;,benefit:&#x27;A fixed reversible numerical interface lets one model process variable text.&#x27;,cost:&#x27;The tokenizer fixes sequence length, vocabulary meaning, and model compatibility.&#x27;,labels:[&#x27;text&#x27;,&#x27;token IDs&#x27;,&#x27;embeddings&#x27;,&#x27;Transformer&#x27;],question:&#x27;Is token ID 200 twice token ID 100?&#x27;,answers:[&#x27;yes&#x27;,&#x27;no&#x27;],correct:1},
-    {name:&#x27;Unicode and UTF-8&#x27;,rule:&#x27;one symbol may use many bytes&#x27;,why:&#x27;Text from every language needs a stable digital representation.&#x27;,plain:&#x27;Unicode names abstract symbols; UTF-8 stores them using one to four bytes.&#x27;,technical:&#x27;Python len counts code points; byte tokenization counts UTF-8 bytes. A visible grapheme may contain multiple code points.&#x27;,benefit:&#x27;UTF-8 is universal and reversible.&#x27;,cost:&#x27;Visible length, code-point count, and byte count can differ greatly across scripts.&#x27;,labels:[&#x27;🤖&#x27;,&#x27;U+1F916&#x27;,&#x27;240 159 164 150&#x27;,&#x27;4 byte tokens&#x27;],question:&#x27;How many UTF-8 bytes encode 🤖?&#x27;,answers:[&#x27;1&#x27;,&#x27;2&#x27;,&#x27;4&#x27;],correct:2},
-    {name:&#x27;Byte tokens&#x27;,rule:&#x27;each byte 0…255 is a token&#x27;,why:&#x27;A tokenizer needs a fallback that can represent unseen text without an unknown token.&#x27;,plain:&#x27;Start with a tiny dictionary containing every possible byte.&#x27;,technical:&#x27;Base vocabulary has 256 byte IDs; BOS/EOS/PAD are reserved IDs. Decode joins bytes then applies UTF-8.&#x27;,benefit:&#x27;Lossless coverage of all valid UTF-8 text.&#x27;,cost:&#x27;Common words and non-ASCII scripts can consume many positions.&#x27;,labels:[&#x27;text&#x27;,&#x27;UTF-8 bytes&#x27;,&#x27;byte IDs&#x27;,&#x27;round trip&#x27;],question:&#x27;Why did नमस्ते use 18 byte tokens?&#x27;,answers:[&#x27;6 code points × 3 bytes&#x27;,&#x27;18 characters&#x27;,&#x27;BOS/EOS only&#x27;],correct:0},
-    {name:&#x27;Why BPE&#x27;,rule:&#x27;frequent neighbors become shortcuts&#x27;,why:&#x27;Byte sequences are universal but often long, increasing context and compute.&#x27;,plain:&#x27;BPE builds a shortcut dictionary for pieces that frequently appear next to each other.&#x27;,technical:&#x27;Each merge adds one vocabulary ID and replaces non-overlapping occurrences of one ordered pair.&#x27;,benefit:&#x27;Fewer positions reduce per-token work and quadratic attention score cells.&#x27;,cost:&#x27;Larger embeddings/output layers; compression depends on training language and domain.&#x27;,labels:[&#x27;b a n a n a&#x27;,&#x27;a+n frequent&#x27;,&#x27;shortcut an&#x27;,&#x27;b an an a&#x27;],question:&#x27;What does one merge add?&#x27;,answers:[&#x27;one vocabulary entry&#x27;,&#x27;one character&#x27;,&#x27;one model layer&#x27;],correct:0},
-    {name:&#x27;BPE training&#x27;,rule:&#x27;count → choose → assign → merge → repeat&#x27;,why:&#x27;The tokenizer must learn which shortcuts save the most positions on its corpus.&#x27;,plain:&#x27;Count neighboring pieces, choose the most common pair, name it, replace it, and look again.&#x27;,technical:&#x27;choose_pair maximizes frequency; deterministic tie-break ensures reproducibility. Merge consumes two positions on a match.&#x27;,benefit:&#x27;Learns useful multi-byte, subword, word, whitespace, and punctuation pieces.&#x27;,cost:&#x27;Naive M merges over T tokens is roughly O(M×T); corpus bias affects shortcuts.&#x27;,labels:[&#x27;count pairs&#x27;,&#x27;choose pair&#x27;,&#x27;assign ID&#x27;,&#x27;merge&#x27;,&#x27;repeat&#x27;],question:&#x27;When are pair frequencies counted?&#x27;,answers:[&#x27;tokenizer training&#x27;,&#x27;every model token&#x27;,&#x27;decoding only&#x27;],correct:0},
-    {name:&#x27;Encoding and decoding&#x27;,rule:&#x27;encoding replays saved rules&#x27;,why:&#x27;New text needs stable IDs from the exact learned vocabulary.&#x27;,plain:&#x27;Encoding uses the shortcut dictionary; decoding opens shortcuts into original bytes.&#x27;,technical:&#x27;Encoding starts from UTF-8 bytes and applies saved merges in priority order. Decoding joins vocab[id] byte pieces.&#x27;,benefit:&#x27;Deterministic reusable mapping with lossless round trips.&#x27;,cost:&#x27;Changing rule order or vocabulary breaks trained embedding compatibility.&#x27;,labels:[&#x27;new text&#x27;,&#x27;base bytes&#x27;,&#x27;saved merges&#x27;,&#x27;token IDs&#x27;,&#x27;original text&#x27;],question:&#x27;Does encoding call choose_pair per sentence?&#x27;,answers:[&#x27;yes&#x27;,&#x27;no&#x27;],correct:1},
-    {name:&#x27;Tokenizer tradeoff&#x27;,rule:&#x27;dictionary shortcuts ↔ text pieces&#x27;,why:&#x27;Adding shortcuts makes the dictionary larger but can write familiar text with fewer pieces.&#x27;,plain:&#x27;Without shortcut “an”, banana uses 6 pieces. Add one “an” dictionary entry and banana uses 4 pieces.&#x27;,technical:&#x27;Each merge adds exactly one token ID and removes one position per non-overlapping match. Model-compute formulas are deferred.&#x27;,benefit:&#x27;Fewer pieces for familiar text and more text within a fixed token limit.&#x27;,cost:&#x27;Too few shortcuts fragment text; too many create rare or domain-specific dictionary entries.&#x27;,labels:[&#x27;dictionary +1&#x27;,&#x27;shortcut an&#x27;,&#x27;banana 6→4&#x27;],question:&#x27;What does the “an” merge trade?&#x27;,answers:[&#x27;+1 entry for fewer pieces&#x27;,&#x27;fewer entries for more pieces&#x27;,&#x27;no dictionary change&#x27;],correct:0}
+  const root = document.getElementById(&#x27;module01-checkpoint&#x27;);
+  const topics = [
+    {name:&#x27;UTF-8 byte foundation&#x27;, rule:&#x27;Every valid text becomes byte IDs 0–255.&#x27;, flow:[&#x27;text&#x27;,&#x27;UTF-8&#x27;,&#x27;bytes&#x27;,&#x27;base IDs&#x27;], detail:&#x27;One visible symbol may require multiple bytes. PAD/BOS/EOS use 256–258; learned merges begin at 259.&#x27;, question:&#x27;Why can byte BPE represent an unseen emoji?&#x27;, answers:[&#x27;All possible bytes already have IDs&#x27;,&#x27;Encoding learns a new emoji rule&#x27;], correct:0},
+    {name:&#x27;BPE training&#x27;, rule:&#x27;Count → choose → assign → merge → recount.&#x27;, flow:[&#x27;count pairs&#x27;,&#x27;choose frequent&#x27;,&#x27;new ID&#x27;,&#x27;replace&#x27;,&#x27;repeat&#x27;], detail:&#x27;Merges are ordered, non-overlapping, deterministic under the tie-break, and learned only from the training corpus.&#x27;, question:&#x27;Does a requested budget of 40 guarantee 40 rules?&#x27;, answers:[&#x27;Yes&#x27;,&#x27;No, training can run out of pairs&#x27;], correct:1},
+    {name:&#x27;Encoding&#x27;, rule:&#x27;Replay learned merge rules in training order.&#x27;, flow:[&#x27;new text&#x27;,&#x27;base bytes&#x27;,&#x27;rule 1&#x27;,&#x27;rule 2&#x27;,&#x27;BPE IDs&#x27;], detail:&#x27;Encoding never counts frequencies or invents a rule for the current sentence.&#x27;, question:&#x27;Why did repeated emoji receive zero compression?&#x27;, answers:[&#x27;No learned emoji-byte rule matched&#x27;,&#x27;UTF-8 cannot encode emoji&#x27;], correct:0},
+    {name:&#x27;Decoding&#x27;, rule:&#x27;Expand learned IDs in reverse rule order.&#x27;, flow:[&#x27;BPE IDs&#x27;,&#x27;reverse rules&#x27;,&#x27;base bytes&#x27;,&#x27;UTF-8&#x27;,&#x27;text&#x27;], detail:&#x27;Reverse order resolves nested IDs. Unknown IDs fail before partial decoding; round trip must recover exact text.&#x27;, question:&#x27;Why expand the newest rule first?&#x27;, answers:[&#x27;It may contain earlier learned IDs&#x27;,&#x27;It makes bytes smaller&#x27;], correct:0},
+    {name:&#x27;Coverage versus compression&#x27;, rule:&#x27;Base bytes guarantee coverage; learned rules improve compression.&#x27;, flow:[&#x27;unseen text&#x27;,&#x27;known bytes&#x27;,&#x27;valid tokens&#x27;,&#x27;maybe many pieces&#x27;], detail:&#x27;Training-domain text often compresses better. Evaluation text remains representable even when no learned rule matches.&#x27;, question:&#x27;Does more vocabulary guarantee fewer tokens for every input?&#x27;, answers:[&#x27;Yes&#x27;,&#x27;No&#x27;], correct:1},
+    {name:&#x27;Measured cost tradeoff&#x27;, rule:&#x27;More useful rules cost passes but can shorten familiar text.&#x27;, flow:[&#x27;0 rules: 1499&#x27;,&#x27;5: 401&#x27;,&#x27;10: 203&#x27;,&#x27;20: 104&#x27;,&#x27;28: 104&#x27;], detail:&#x27;Naive training and encoding scan per rule. Vocabulary is 259 plus actual learned rules; compression can plateau.&#x27;, question:&#x27;Why did 20→28 rules leave evaluation at 104 tokens?&#x27;, answers:[&#x27;Later rules did not match evaluation text&#x27;,&#x27;The byte vocabulary disappeared&#x27;], correct:0}
   ];
-  function add(tag,attrs,label){const n=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=&gt;n.setAttribute(k,v));if(label!==undefined)n.textContent=label;svg.appendChild(n);return n;}
-  function render(index){const topic=topics[index];svg.replaceChildren();root.querySelectorAll(&#x27;[data-topic]&#x27;).forEach(b=&gt;b.setAttribute(&#x27;aria-pressed&#x27;,String(Number(b.dataset.topic)===index)));root.querySelector(&#x27;#m1-topic&#x27;).textContent=topic.name;root.querySelector(&#x27;#m1-rule&#x27;).textContent=topic.rule;[&#x27;why&#x27;,&#x27;plain&#x27;,&#x27;technical&#x27;,&#x27;benefit&#x27;,&#x27;cost&#x27;].forEach(k=&gt;root.querySelector(`#m1-${k}`).textContent=topic[k]);root.querySelector(&#x27;#m1-question&#x27;).textContent=topic.question;root.querySelector(&#x27;#m1-feedback&#x27;).textContent=&#x27;Choose an answer.&#x27;;const gap=topic.labels.length&gt;1?600/(topic.labels.length-1):0;topic.labels.forEach((label,i)=&gt;{const x=60+i*gap;add(&#x27;rect&#x27;,{x:x-50,y:72,width:100,height:58,rx:4,fill:`color-mix(in srgb, var(--viz-series-${(i%3)+1}) 15%, transparent)`,stroke:&#x27;var(--border)&#x27;});add(&#x27;text&#x27;,{x,y:106,&#x27;text-anchor&#x27;:&#x27;middle&#x27;,fill:&#x27;currentColor&#x27;},label);if(i&lt;topic.labels.length-1){const nx=60+(i+1)*gap;add(&#x27;path&#x27;,{d:`M${x+50} 101 H${nx-50} M${nx-58} 94 L${nx-50} 101 L${nx-58} 108`,fill:&#x27;none&#x27;,stroke:&#x27;var(--border)&#x27;,&#x27;stroke-width&#x27;:2});}});add(&#x27;text&#x27;,{x:360,y:190,&#x27;text-anchor&#x27;:&#x27;middle&#x27;,fill:&#x27;var(--muted-foreground)&#x27;},topic.rule);const answers=root.querySelector(&#x27;#m1-answers&#x27;);answers.replaceChildren();topic.answers.forEach((answer,i)=&gt;{const button=document.createElement(&#x27;button&#x27;);button.className=&#x27;btn btn-secondary&#x27;;button.type=&#x27;button&#x27;;button.textContent=answer;button.addEventListener(&#x27;click&#x27;,()=&gt;root.querySelector(&#x27;#m1-feedback&#x27;).textContent=i===topic.correct?&#x27;Correct.&#x27;:&#x27;Try again.&#x27;);answers.appendChild(button);});}
-  root.querySelectorAll(&#x27;[data-topic]&#x27;).forEach(b=&gt;b.addEventListener(&#x27;click&#x27;,()=&gt;render(Number(b.dataset.topic))));render(0);
+  const name = root.querySelector(&#x27;#m1c-name&#x27;);
+  const rule = root.querySelector(&#x27;#m1c-rule&#x27;);
+  const flow = root.querySelector(&#x27;#m1c-flow&#x27;);
+  const detail = root.querySelector(&#x27;#m1c-detail&#x27;);
+  const question = root.querySelector(&#x27;#m1c-question&#x27;);
+  const answers = root.querySelector(&#x27;#m1c-answers&#x27;);
+  const feedback = root.querySelector(&#x27;#m1c-feedback&#x27;);
+  function show(index) {
+    const topic = topics[index];
+    name.textContent = topic.name;
+    rule.textContent = topic.rule;
+    flow.replaceChildren(...topic.flow.map(value =&gt; {
+      const node = document.createElement(&#x27;span&#x27;);
+      node.textContent = value;
+      return node;
+    }));
+    detail.textContent = topic.detail;
+    question.textContent = topic.question;
+    answers.replaceChildren(...topic.answers.map((answer, answerIndex) =&gt; {
+      const button = document.createElement(&#x27;button&#x27;);
+      button.className = &#x27;btn&#x27;;
+      button.textContent = answer;
+      button.addEventListener(&#x27;click&#x27;, () =&gt; {
+        feedback.textContent = answerIndex === topic.correct ? &#x27;Correct.&#x27; : &#x27;Try again.&#x27;;
+      });
+      return button;
+    }));
+    feedback.textContent = &#x27;Choose an answer.&#x27;;
+    root.querySelectorAll(&#x27;[data-topic]&#x27;).forEach((button, buttonIndex) =&gt; {
+      button.setAttribute(&#x27;aria-pressed&#x27;, String(buttonIndex === index));
+    });
+  }
+  root.querySelectorAll(&#x27;[data-topic]&#x27;).forEach(button =&gt; {
+    button.addEventListener(&#x27;click&#x27;, () =&gt; show(Number(button.dataset.topic)));
+  });
+  show(0);
 })();
 &lt;/script&gt;
 
