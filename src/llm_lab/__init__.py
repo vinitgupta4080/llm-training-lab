@@ -1,6 +1,5 @@
 """Small, readable implementations for the LLM Training Lab."""
 
-from .tokenizer import ByteTokenizer
+from .tokenizer import ByteBPETokenizer, ByteTokenizer
 
-__all__ = ["ByteTokenizer"]
-
+__all__ = ["ByteBPETokenizer", "ByteTokenizer"]
