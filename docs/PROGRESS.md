@@ -4,18 +4,18 @@ This is the authoritative resume point. Update it after every meaningful learnin
 
 ## Current state
 
-- Current module: Module 1 — text and tokenization
+- Current module: Module 2 — gradients and optimization
 - Status: in progress
-- Next action: run a multilingual BPE round-trip and token-count comparison using a merge-aware tokenizer
-- Last verified: 2026-07-18; repeated BPE exercise and 14 automated tests passing
+- Next action: introduce a scalar slope as local sensitivity, predict finite-difference results, then compare manual derivatives with autograd
+- Last verified: 2026-07-19; Module 1 complete and 16 automated tests passing
 
 ## Module scoreboard
 
 | Module | Status | Required evidence |
 |---|---|---|
 | 0 Setup and measurement | Complete | tensor benchmark, memory calculation, reproducibility test |
-| 1 Tokenization | In progress | BPE merge experiment and multilingual comparison |
-| 2 Autograd and optimization | Not started | scalar autograd, optimizer comparison, gradient profile |
+| 1 Tokenization | Complete | BPE merge experiment and multilingual comparison |
+| 2 Autograd and optimization | In progress | scalar autograd, optimizer comparison, gradient profile |
 | 3 Language modeling | Scaffolded | validation split, sampling, controlled experiment |
 | 4 Transformer | Scaffolded | shape trace, causal test, architecture ablation, profile |
 | 5 Pretraining systems | Not started | data pipeline, schedule, exact resume, throughput profile |
@@ -81,6 +81,11 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
   order; the idea is correct and avoids explicit recursion.
 - Correctly added fail-fast validation for encoded IDs, with only indentation and working-copy
   variable consistency requiring correction.
+- Predicted that repeated robot emoji would compress most under an English-trained BPE tokenizer;
+  measured results showed zero reduction because encoding cannot invent unseen emoji merge rules.
+- Correctly distinguishes tokenizer-training data from evaluation data and explains byte-level
+  BPE coverage: evaluation patterns may lack efficient learned merges, but every UTF-8 byte still
+  has a base vocabulary ID, so unseen text remains representable without an unknown token.
 
 ### Needs reinforcement
 
@@ -330,6 +335,63 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
 - Added durable workspace and project rules that prohibit publishing through
   `vinitgupta-alation`; stored credentials were not changed.
 - Next: resume Module 1 with a multilingual BPE round-trip and token-count comparison.
+
+### 2026-07-19 — Multilingual BPE experiment prepared
+
+- Connected the full lossless path: Unicode text to UTF-8 bytes, ordered BPE encoding,
+  reverse-order merge decoding, then UTF-8 text recovery.
+- Added a step-through revision visual covering each representation in the round trip.
+- Controlled comparison will train merges on an English-heavy corpus and evaluate English,
+  accented Latin, Devanagari, and emoji without changing the learned merge table.
+- Next: learner predicts which evaluation slice receives the largest token-count reduction.
+
+### 2026-07-19 — Multilingual BPE experiment measured
+
+- Implemented an inspectable `ByteBPETokenizer` with learned IDs beginning at 259, ordered
+  encoding, reverse-order decoding, unknown-ID validation, and multilingual tests.
+- Measured `banana banana` at 13→3 tokens (76.9% reduction); accented Latin, Devanagari, and
+  repeated emoji each received 0% reduction under the English-only merge table.
+- All four slices round-tripped exactly, and all 16 automated tests passed.
+- Learner's emoji prediction was falsified: evaluation-time repetition does not create a rule
+  absent from the tokenizer's training data.
+- Next: learner explains the result, then profile runtime scaling with the merge count.
+
+### 2026-07-19 — BPE cost-scaling benchmark prepared
+
+- Added a controlled benchmark for merge budgets 0, 5, 10, 20, and 40 with fixed training and
+  evaluation text, warmup, explicit repetitions, median latency, vocabulary, and token counts.
+- Added an adjustable revision visual linking merge count to vocabulary and naive scan passes.
+- Benchmark remains unexecuted until the learner records four directional predictions.
+- Next: learner predicts the direction of all four metrics.
+
+### 2026-07-19 — BPE scaling predictions recorded
+
+- Learner predicted that training latency, encoding latency, and vocabulary size increase with
+  merge budget, while token count decreases for familiar evaluation text.
+- Next: execute the unchanged benchmark and inspect monotonicity, plateaus, and measurement noise.
+
+### 2026-07-19 — BPE cost scaling measured
+
+- Learner correctly predicted the broad directions: training time, encoding time, and vocabulary
+  increased, while familiar-text token count decreased.
+- Measured budgets 0/5/10/20/40; the final request learned only 28 rules because no further pair
+  remained, so vocabulary reached 287 rather than 299.
+- Familiar evaluation text compressed 1,499→401→203→104 tokens, then plateaued at 104; later
+  rules did not match that evaluation slice.
+- Added an interactive measured-results explorer. All 16 automated tests still pass.
+- Next: learner explains both plateaus, then finish Module 1 profiling/checkpoint evidence.
+
+### 2026-07-19 — Module 1 completed
+
+- Learner explained UTF-8 byte coverage, BPE pair counting and ordered merges, the difference
+  between training and encoding, reverse-order decoding, and training-versus-evaluation effects.
+- Implemented BPE training, encoding, decoding, reserved-ID safety, unknown-ID failure handling,
+  and a reusable multilingual byte-BPE tokenizer.
+- Controlled multilingual comparison and merge-scaling profile provide correctness, quality,
+  timing, vocabulary, and token-count evidence. All 16 tests pass.
+- Consolidated the final theory, measured cost results, and self-checks into the Module 1
+  interactive revision checkpoint and Git-tracked standalone page.
+- Module 2 starts next with scalar slopes, gradients, and why optimization needs them.
 - Added assertions using byte IDs for `banana`.
 - Next: implement pair counting and proceed one failing assertion at a time.
 
