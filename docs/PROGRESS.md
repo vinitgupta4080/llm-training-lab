@@ -513,6 +513,17 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
   occurs.
 - Next: learner explains why DDP does not reduce per-GPU model-state memory, then returns to the
   single-GPU optimizer exercise.
+
+### 2026-07-26 — Public revision site caught up
+
+- Corrected the public revision gap: Module 2 concepts had individual conversation visuals and
+  progress entries but no Git-tracked consolidated revision page.
+- Added an interactive Module 2 revision hub covering gradients, forward/backward, batched matrix
+  loss, microbatch accumulation, optimizer updates, memory lifetime, and a labeled GPU preview.
+- Added a styled GitHub Pages homepage linking the complete Module 0/1 hubs and the in-progress
+  Module 2 hub.
+- Next: resume the single-GPU optimizer exercise; FSDP and tensor-parallel implementation remain
+  deliberately deferred to their later systems modules.
 - Added assertions using byte IDs for `banana`.
 - Next: implement pair counting and proceed one failing assertion at a time.
 
