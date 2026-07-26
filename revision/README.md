@@ -6,6 +6,8 @@ and remain available in the public repository. Open an HTML file directly in a b
 - `module-00-revision.html`: Module 0 theory, diagrams, core rules, and self-check questions
 - `module-01-revision.html`: completed tokenization theory, UTF-8 byte coverage, BPE training,
   ordered encoding, reverse decoding, multilingual behavior, measured cost scaling, and self-checks
+- `module-02-revision.html`: current gradients, autograd, batch loss, accumulation, optimizers,
+  training-memory lifetime, and a labeled distributed-training preview
 - `tokenizer-tradeoff-simulator.html`: adjustable vocabulary, hidden-width, and sequence cost model
 - `bpe-tradeoff-beginner.html`: prerequisite-free dictionary-shortcuts versus text-pieces view
 
