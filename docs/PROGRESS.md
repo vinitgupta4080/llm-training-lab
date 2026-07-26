@@ -6,7 +6,7 @@ This is the authoritative resume point. Update it after every meaningful learnin
 
 - Current module: Module 2 — gradients and optimization
 - Status: in progress
-- Next action: introduce a scalar slope as local sensitivity, predict finite-difference results, then compare manual derivatives with autograd
+- Next action: learner explains why `optimizer.step()` leaves `.grad` stored and why the next independent step must clear it
 - Last verified: 2026-07-19; Module 1 complete and 16 automated tests passing
 
 ## Module scoreboard
@@ -90,6 +90,14 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
 ### Needs reinforcement
 
 - Memory units: dtype widths are bits; storage is usually reported in bytes or MiB.
+- Scalar gradients are new: reinforce change in output, change in input, their ratio, and the
+  distinction between a finite-difference estimate and the exact derivative.
+- Forward/backward/update separation: learner initially expected `backward()` to average losses
+  and update batched values. Reinforce that the loss expression selects the reduction,
+  `backward()` computes and accumulates parameter gradients, and `optimizer.step()` updates
+  parameters.
+- Optimizers are new: introduce them as update-rule objects that consume stored parameter
+  gradients; begin with plain SGD before momentum or Adam.
 - Throughput (GFLOP/s) is a new concept.
 - Latency versus throughput: learner initially described them as inverses; reinforce that
   this holds only under fixed work and execution conditions, not in general.
@@ -129,6 +137,17 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
 
 - Why GFLOP/s matters and why the middle-sized matrix can achieve higher throughput.
 - What may remain nondeterministic even after a random seed is set.
+
+### Newly introduced
+
+- Microbatch gradient equivalence: differentiation distributes over a summed loss, while mean
+  losses require scaling by the number of equal accumulation steps (or weighting by actual
+  example/token counts when sizes differ).
+- Batched token-vector tensors: `[B,T,C]` contains `B` sequences, `T` token positions per
+  sequence, and one `C`-dimensional vector at each `[batch,token]` position.
+- Multi-GPU training layouts: DDP replicates model/gradient/optimizer state and splits data;
+  FSDP shards parameters, gradients, and optimizer state; tensor parallelism splits individual
+  layer computations and weights.
 
 ## Evidence index
 
@@ -392,6 +411,108 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
 - Consolidated the final theory, measured cost results, and self-checks into the Module 1
   interactive revision checkpoint and Git-tracked standalone page.
 - Module 2 starts next with scalar slopes, gradients, and why optimization needs them.
+
+### 2026-07-19 — Module 2 scalar-gradient lesson started
+
+- Introduced local sensitivity using `y=x²` at `x=3` and corrected the initial finite-difference
+  prediction: increasing x by 0.001 changes y by +0.006001, giving slope 6.001 near exact 6.
+- Added an adjustable finite-difference revision tool comparing measured slope with `dy/dx=2x`.
+- Next: learner predicts the gradient sign and loss-reducing direction at `x=-3` before autograd.
+
+### 2026-07-19 — Autograd forward/backward model introduced
+
+- Explained the full first experiment before coding: create a leaf tensor, record the forward
+  graph, traverse it with backward, and read the gradient stored on the leaf.
+- Added an interactive forward/backward graph and the Module 2A lesson scaffold.
+- Next: learner predicts all four observable values before running PyTorch.
+
+### 2026-07-19 — Scalar autograd exercise prepared
+
+- Learner confirmed the interpretation of `x` as a simplified trainable parameter and `y=x²`
+  as a toy loss function.
+- Added a three-TODO exercise with assertions for leaf value, forward loss, backward return,
+  stored gradient, and agreement with the manual derivative.
+- Next: learner implements tensor creation, forward expression, and backward call.
+
+### 2026-07-19 — First autograd exercise completed
+
+- Learner correctly created a scalar leaf tensor with gradient tracking, computed `x²`, and
+  called `backward`; the call was assigned to expose its `None` return contract.
+- Assertions verify `x=-3`, `y=9`, `backward_result is None`, and `x.grad=-6`, matching `2x`.
+- Next: explain gradient accumulation and the need to clear gradients between training steps.
+
+### 2026-07-19 — Gradient accumulation introduced
+
+- Explained `.grad` as an accumulation bucket: two fresh forward/backward graphs at `x=-3`
+  contribute `-6 + -6 = -12` unless the stored gradient is cleared.
+- Connected default accumulation to both accidental cross-step leakage and intentional
+  microbatch accumulation used when a full batch does not fit in memory.
+- Added an interactive accumulation/clear tool and a one-TODO exercise.
+- Next: learner clears the gradient before the third backward pass.
+
+### 2026-07-19 — Microbatch equivalence explained
+
+- Connected `.grad` accumulation to full-batch training: gradients of individual loss terms add,
+  so summed microbatch gradients match the gradient of the summed full-batch loss.
+- Distinguished sum from mean reduction: with `K` equal microbatches, each microbatch mean loss
+  must be divided by `K` before `backward()` to match a full-batch mean.
+- Added an interactive full-batch-versus-microbatch calculator, including unequal-token and
+  stochastic-operation caveats.
+- Next: learner predicts the scaling for four equal microbatches, then completes gradient clearing.
+
+### 2026-07-20 — Multi-token vector tensor
+
+- Clarified that batching averages corresponding parameter-gradient positions across examples;
+  it does not average different vector dimensions into one scalar.
+- Added an interactive `[B,T,C]=[2,3,4]` viewer that exposes each batch's three token vectors.
+- Next: learner constructs the displayed tensor in PyTorch and verifies its shape.
+
+### 2026-07-21 — Batched mean-loss exercise prepared
+
+- Extended the one-point model to three `(x,target)` pairs sharing one trainable scalar `w`.
+- Traced vectorized predictions, per-point squared losses, scalar mean reduction, the mean
+  gradient with respect to `w`, and a single simultaneous parameter update.
+- Added a forward/backward/update visual and a four-TODO PyTorch exercise with numeric assertions.
+- Next: learner implements the vectorized predictions using the shared weight.
+
+### 2026-07-21 — Batched matrix-gradient exercise prepared
+
+- Generalized the shared scalar weight to a `[C_in,C_out]` weight matrix applied to every token
+  vector in a `[B,T,C_in]` input tensor.
+- Added a manually checkable `B=2,T=2,C_in=2,C_out=2` exercise covering prediction shape,
+  one-token matrix multiplication, scalar MSE, backward, and weight-gradient shape and values.
+- Added an interactive trace from one token through the full batch to the shared gradient matrix.
+- Next: learner writes the batched matrix multiplication for TODO 1.
+
+### 2026-07-26 — Optimizer introduced
+
+- Paused the batched exercise because `optimizer.step()` had appeared before a formal optimizer
+  lesson.
+- Introduced the optimizer as the separate mechanism that reads `.grad` and changes parameters;
+  plain SGD implements `parameter -= learning_rate * gradient`.
+- Added an adjustable one-parameter SGD update visual separating parameter, gradient, learning
+  rate, and updated value.
+- Next: learner predicts one SGD update, then resumes the batched matrix exercise.
+
+### 2026-07-26 — Training-step memory lifecycle
+
+- Explained the reason for gradient clearing: backward adds into persistent leaf `.grad` storage,
+  while `optimizer.step()` reads but deliberately does not erase that storage.
+- Distinguished persistent parameter/gradient/optimizer state from temporary forward activations
+  and the computation graph, which is normally freed after backward.
+- Added a complete three-step SGD trace and an interactive clear/forward/backward/step memory view.
+- Next: learner explains why clearing is needed between independent optimizer steps.
+
+### 2026-07-26 — Multi-GPU state placement introduced
+
+- Mapped parameters, gradients, optimizer state, activations, and computation graphs from one GPU
+  onto DDP, fully sharded data parallel, and tensor-parallel layouts.
+- Explained DDP gradient all-reduce and why identical starting parameters plus identical averaged
+  gradients let independent local optimizers remain synchronized.
+- Added a four-GPU comparison showing what is replicated versus sharded and where communication
+  occurs.
+- Next: learner explains why DDP does not reduce per-GPU model-state memory, then returns to the
+  single-GPU optimizer exercise.
 - Added assertions using byte IDs for `banana`.
 - Next: implement pair counting and proceed one failing assertion at a time.
 
