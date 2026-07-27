@@ -754,7 +754,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;autograd&quot; aria-pressed=&quot;false&quot;&gt;Autograd&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;batch&quot; aria-pressed=&quot;false&quot;&gt;Batch loss&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;accumulation&quot; aria-pressed=&quot;false&quot;&gt;Accumulation&lt;/button&gt;
-    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;optimizer&quot; aria-pressed=&quot;false&quot;&gt;Optimizer&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;optimizer&quot; aria-pressed=&quot;false&quot;&gt;Optimizer loop&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;sgd&quot; aria-pressed=&quot;false&quot;&gt;SGD&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;momentum&quot; aria-pressed=&quot;false&quot;&gt;Momentum&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;adam&quot; aria-pressed=&quot;false&quot;&gt;Adam&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;adamw&quot; aria-pressed=&quot;false&quot;&gt;AdamW&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;comparison&quot; aria-pressed=&quot;false&quot;&gt;Compare&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;learningrate&quot; aria-pressed=&quot;false&quot;&gt;Learning rate&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;distributed&quot; aria-pressed=&quot;false&quot;&gt;GPU preview&lt;/button&gt;
   &lt;/div&gt;
@@ -833,6 +838,70 @@ optimizer.step()&lt;/code&gt;&lt;/pre&gt;
         &lt;tr&gt;&lt;td&gt;parameters&lt;/td&gt;&lt;td&gt;persistent&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;parameter gradients&lt;/td&gt;&lt;td&gt;until cleared&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;optimizer state&lt;/td&gt;&lt;td&gt;persistent&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;forward activations / saved tensors&lt;/td&gt;&lt;td&gt;normally until backward&lt;/td&gt;&lt;/tr&gt;
       &lt;/tbody&gt;&lt;/table&gt;
       &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Why clear?&lt;/b&gt; &lt;code&gt;optimizer.step()&lt;/code&gt; reads gradients but intentionally leaves them stored so accumulation remains possible.&lt;/div&gt;`,
+    sgd:`
+      &lt;div&gt;&lt;h2&gt;Plain SGD: follow the current gradient&lt;/h2&gt;&lt;p&gt;SGD is the smallest useful optimizer. It needs the current parameter, current gradient, and learning rate—no direction history.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;equation&quot;&gt;&lt;code&gt;w_new = w − learning_rate × gradient&lt;/code&gt;&lt;/div&gt;
+      &lt;div class=&quot;flow&quot;&gt;&lt;span class=&quot;node&quot;&gt;w = 5&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;gradient = 10&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;LR = 0.1&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;w_new = 4&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Why use it?&lt;/b&gt;&lt;p&gt;It is transparent, cheap, and a strong baseline. Every update can be calculated by hand.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;What can go wrong?&lt;/b&gt;&lt;p&gt;One global learning rate may be too large for a steep direction and too small for a shallow direction.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Persistent item per parameter&lt;/th&gt;&lt;th&gt;Extra state elements&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;weight&lt;/td&gt;&lt;td&gt;0 optimizer-state elements&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;pre&gt;&lt;code&gt;optimizer = torch.optim.SGD([weight], lr=0.01)&lt;/code&gt;&lt;/pre&gt;
+      &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Remember:&lt;/b&gt; SGD does not mean “update every training example separately.” Batches first combine contributions into &lt;code&gt;weight.grad&lt;/code&gt;; SGD then consumes that gradient.&lt;/div&gt;`,
+    momentum:`
+      &lt;div&gt;&lt;h2&gt;SGD with momentum: remember recent direction&lt;/h2&gt;&lt;p&gt;A current gradient can zigzag. Momentum stores a velocity so consistent directions build speed while alternating directions partially cancel.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;equation&quot;&gt;&lt;code&gt;velocity = momentum × old_velocity + current_gradient&lt;/code&gt;&lt;br&gt;&lt;code&gt;w_new = w − learning_rate × velocity&lt;/code&gt;&lt;/div&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Step&lt;/th&gt;&lt;th&gt;Gradient&lt;/th&gt;&lt;th&gt;Velocity at momentum 0.9&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;10&lt;/td&gt;&lt;td&gt;10&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;6&lt;/td&gt;&lt;td&gt;0.9 × 10 + 6 = 15&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;−2.3&lt;/td&gt;&lt;td&gt;0.9 × 15 − 2.3 = 11.2&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Benefit&lt;/b&gt;&lt;p&gt;Accelerates along a direction that remains useful and can reduce narrow-valley zigzagging.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Risk&lt;/b&gt;&lt;p&gt;Stored velocity can overshoot. In our LR 0.018 experiment, momentum lost to plain SGD; at LR 0.005, it won.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;pre&gt;&lt;code&gt;optimizer = torch.optim.SGD(
+    [weight], lr=0.01, momentum=0.9
+)&lt;/code&gt;&lt;/pre&gt;
+      &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Memory:&lt;/b&gt; momentum stores one velocity tensor with the same shape as every optimized weight tensor.&lt;/div&gt;`,
+    adam:`
+      &lt;div&gt;&lt;h2&gt;Adam: direction history plus scale history&lt;/h2&gt;&lt;p&gt;Different weight dimensions can receive gradients with very different sizes. Adam adapts the step independently at every parameter position.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;equation&quot;&gt;&lt;code&gt;m = direction history &amp;nbsp; | &amp;nbsp; v = squared-gradient-size history&lt;/code&gt;&lt;br&gt;&lt;code&gt;update ≈ learning_rate × direction / size&lt;/code&gt;&lt;/div&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Stored state&lt;/th&gt;&lt;th&gt;What it remembers&lt;/th&gt;&lt;th&gt;Shape&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;&lt;code&gt;m&lt;/code&gt; / &lt;code&gt;exp_avg&lt;/code&gt;&lt;/td&gt;&lt;td&gt;moving average of gradients&lt;/td&gt;&lt;td&gt;same as weight&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;&lt;code&gt;v&lt;/code&gt; / &lt;code&gt;exp_avg_sq&lt;/code&gt;&lt;/td&gt;&lt;td&gt;moving average of squared gradients&lt;/td&gt;&lt;td&gt;same as weight&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;div class=&quot;flow&quot;&gt;&lt;span class=&quot;node&quot;&gt;gradient [10, 500]&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;separate m and v per position&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;roughly normalized directions [1, 1]&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Why useful?&lt;/b&gt;&lt;p&gt;A historically large-gradient dimension is scaled down relative to a small-gradient dimension. One raw gradient cannot dominate only because of units or curvature.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;What it does not promise&lt;/b&gt;&lt;p&gt;The update is not always exactly ±1, and Adam is not automatically best at the same numeric learning rate as SGD.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;pre&gt;&lt;code&gt;optimizer = torch.optim.Adam([weight], lr=0.001)&lt;/code&gt;&lt;/pre&gt;
+      &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Memory:&lt;/b&gt; Adam usually stores two full-size floating-point state tensors per optimized parameter, plus a small step counter. That can be a major LLM training cost.&lt;/div&gt;`,
+    adamw:`
+      &lt;div&gt;&lt;h2&gt;AdamW: Adam plus decoupled weight decay&lt;/h2&gt;&lt;p&gt;Adam learns from the task gradient. AdamW also applies a separate gentle pull toward zero, controlled by &lt;code&gt;weight_decay&lt;/code&gt;.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;equation&quot;&gt;&lt;code&gt;w_new = w − AdamUpdate(gradient) − learning_rate × weight_decay × w&lt;/code&gt;&lt;/div&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Example&lt;/th&gt;&lt;th&gt;Adam part&lt;/th&gt;&lt;th&gt;Decay part&lt;/th&gt;&lt;th&gt;New weight&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;w=10, gradient=0&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;−0.01&lt;/td&gt;&lt;td&gt;9.99&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;w=10, target=8&lt;/td&gt;&lt;td&gt;−0.10&lt;/td&gt;&lt;td&gt;−0.01&lt;/td&gt;&lt;td&gt;9.89&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;w=10, target=12&lt;/td&gt;&lt;td&gt;+0.10&lt;/td&gt;&lt;td&gt;−0.01&lt;/td&gt;&lt;td&gt;10.09&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Why shrink?&lt;/b&gt;&lt;p&gt;It discourages the training solution from depending on unnecessarily large weights. Task gradients can still maintain or grow weights that help prediction.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Too much decay&lt;/b&gt;&lt;p&gt;The pull toward zero can fight useful task gradients and cause underfitting. Longer training does not remove this bias because decay acts every step.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;pre&gt;&lt;code&gt;optimizer = torch.optim.AdamW(
+    [weight], lr=0.001, weight_decay=0.01
+)&lt;/code&gt;&lt;/pre&gt;
+      &lt;div class=&quot;check&quot;&gt;&lt;b&gt;PyTorch edge case:&lt;/b&gt; a zero gradient tensor permits the AdamW decay update. If &lt;code&gt;weight.grad is None&lt;/code&gt;, the optimizer skips that parameter, including decay.&lt;/div&gt;`,
+    comparison:`
+      &lt;div&gt;&lt;h2&gt;How to compare and choose optimizers&lt;/h2&gt;&lt;p&gt;There is no universal winner. First compare mechanisms at identical settings; then tune each optimizer fairly within the same total search and final-run budget.&lt;/p&gt;&lt;/div&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Optimizer&lt;/th&gt;&lt;th&gt;Uses current gradient&lt;/th&gt;&lt;th&gt;History per weight&lt;/th&gt;&lt;th&gt;Weight decay&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;SGD&lt;/td&gt;&lt;td&gt;yes&lt;/td&gt;&lt;td&gt;none&lt;/td&gt;&lt;td&gt;optional coupled L2-style setting&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;SGD + momentum&lt;/td&gt;&lt;td&gt;yes&lt;/td&gt;&lt;td&gt;1 velocity&lt;/td&gt;&lt;td&gt;optional coupled L2-style setting&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Adam&lt;/td&gt;&lt;td&gt;yes&lt;/td&gt;&lt;td&gt;m and v&lt;/td&gt;&lt;td&gt;not decoupled in classic Adam&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;AdamW&lt;/td&gt;&lt;td&gt;yes&lt;/td&gt;&lt;td&gt;m and v&lt;/td&gt;&lt;td&gt;separate direct shrinkage&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;h3&gt;Our tuned 50-update toy experiment&lt;/h3&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Optimizer&lt;/th&gt;&lt;th&gt;Best tested LR&lt;/th&gt;&lt;th&gt;Final loss&lt;/th&gt;&lt;th&gt;Optimizer-state elements&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;plain SGD&lt;/td&gt;&lt;td&gt;0.019&lt;/td&gt;&lt;td&gt;0.552536&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;momentum&lt;/td&gt;&lt;td&gt;0.017&lt;/td&gt;&lt;td&gt;0.303671&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Adam&lt;/td&gt;&lt;td&gt;0.5&lt;/td&gt;&lt;td&gt;0.029599&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;p&gt;The search evaluated 28 candidates: 1,400 optimizer steps, or 28× the compute of one final 50-step run. Hyperparameter search is part of the cost.&lt;/p&gt;
+      &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Fair comparison&lt;/b&gt;&lt;p&gt;Same data, initialization, number of updates or tokens, validation set, seeds, and comparable tuning budget.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Production decision&lt;/b&gt;&lt;p&gt;Compare validation quality, stability, time-to-quality, throughput, optimizer memory, and total tuning cost—not loss alone.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Limitation:&lt;/b&gt; this two-parameter toy result explains optimizer mechanics. It does not prove Adam wins on every model or LLM workload.&lt;/div&gt;`,
     learningrate:`
       &lt;div&gt;&lt;h2&gt;Learning rate and compute budget&lt;/h2&gt;&lt;p&gt;The learning rate scales every gradient update. We select it by controlled experiments, not from the number alone.&lt;/p&gt;&lt;/div&gt;
       &lt;div class=&quot;equation&quot;&gt;&lt;code&gt;parameter_new = parameter_old − learning_rate × gradient&lt;/code&gt;&lt;/div&gt;
