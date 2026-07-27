@@ -21,17 +21,17 @@ weight = torch.tensor(
 )
 
 # TODO 1: Apply the shared weight to every token vector with matrix multiplication.
-predictions = None
+predictions = inputs @ weight
 
 # TODO 2: Verify one token manually by selecting inputs[0, 0] and multiplying by weight.
-first_prediction = None
+first_prediction = inputs[0, 0] @ weight
 
 # TODO 3: Calculate the scalar mean squared error across both batches, both tokens,
 # and both output dimensions.
-mean_loss = None
+mean_loss = ((targets - predictions) ** 2).mean()
 
 # TODO 4: Run backward so weight.grad receives a [C_in, C_out] gradient matrix.
-
+mean_loss.backward()
 
 assert predictions is not None
 assert first_prediction is not None
@@ -43,4 +43,21 @@ assert weight.grad is not None
 assert weight.grad.shape == weight.shape
 assert torch.allclose(weight.grad, torch.tensor([[-21.0, -50.0], [-25.0, -60.0]]))
 
-print("Batched matrix-gradient exercise passed.")
+loss_before_update = mean_loss.detach()
+optimizer = torch.optim.SGD([weight], lr=0.01)
+
+# TODO 5: Use the gradient already stored in weight.grad to update weight once.
+optimizer.step()
+# TODO 6: Recalculate predictions using the updated weight.
+new_predictions = inputs @ weight
+
+# TODO 7: Recalculate the scalar mean squared error.
+new_mean_loss = ((new_predictions - targets) ** 2).mean()
+
+assert new_predictions is not None
+assert new_mean_loss is not None
+assert new_mean_loss < loss_before_update
+
+print(f"Loss before SGD: {loss_before_update.item():.4f}")
+print(f"Loss after SGD:  {new_mean_loss.item():.4f}")
+print("Batched matrix-gradient and SGD exercise passed.")
