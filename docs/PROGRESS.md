@@ -562,6 +562,8 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
   measured time scaled approximately 1×, 10×, and 100× with optimizer-step count.
 - Added `labs/02_autograd/step_budget_experiment.py` and
   `experiments/2026-07-26_step-budget.md`.
+- Updated `revision/module-02-revision.html` with the measured learning-rate sweep, step-budget
+  comparison, and diminishing-returns decision rule for GitHub Pages.
 - Next: learner interprets diminishing returns, then compares plain SGD with momentum.
 
 ### 2026-07-26 — Public revision site caught up
