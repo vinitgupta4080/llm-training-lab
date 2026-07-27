@@ -755,6 +755,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;batch&quot; aria-pressed=&quot;false&quot;&gt;Batch loss&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;accumulation&quot; aria-pressed=&quot;false&quot;&gt;Accumulation&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;optimizer&quot; aria-pressed=&quot;false&quot;&gt;Optimizer&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;learningrate&quot; aria-pressed=&quot;false&quot;&gt;Learning rate&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;distributed&quot; aria-pressed=&quot;false&quot;&gt;GPU preview&lt;/button&gt;
   &lt;/div&gt;
   &lt;section class=&quot;lesson&quot; aria-live=&quot;polite&quot;&gt;&lt;/section&gt;
@@ -832,6 +833,21 @@ optimizer.step()&lt;/code&gt;&lt;/pre&gt;
         &lt;tr&gt;&lt;td&gt;parameters&lt;/td&gt;&lt;td&gt;persistent&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;parameter gradients&lt;/td&gt;&lt;td&gt;until cleared&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;optimizer state&lt;/td&gt;&lt;td&gt;persistent&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;forward activations / saved tensors&lt;/td&gt;&lt;td&gt;normally until backward&lt;/td&gt;&lt;/tr&gt;
       &lt;/tbody&gt;&lt;/table&gt;
       &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Why clear?&lt;/b&gt; &lt;code&gt;optimizer.step()&lt;/code&gt; reads gradients but intentionally leaves them stored so accumulation remains possible.&lt;/div&gt;`,
+    learningrate:`
+      &lt;div&gt;&lt;h2&gt;Learning rate and compute budget&lt;/h2&gt;&lt;p&gt;The learning rate scales every gradient update. We select it by controlled experiments, not from the number alone.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;equation&quot;&gt;&lt;code&gt;parameter_new = parameter_old − learning_rate × gradient&lt;/code&gt;&lt;/div&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Learning rate&lt;/th&gt;&lt;th&gt;20-step validation loss&lt;/th&gt;&lt;th&gt;Behavior&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;0.0001&lt;/td&gt;&lt;td&gt;31.9640&lt;/td&gt;&lt;td&gt;stable but too slow&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;0.001&lt;/td&gt;&lt;td&gt;5.29169&lt;/td&gt;&lt;td&gt;stable but slow&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;0.01&lt;/td&gt;&lt;td&gt;0.091921&lt;/td&gt;&lt;td&gt;effective&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;0.03&lt;/td&gt;&lt;td&gt;0.084965&lt;/td&gt;&lt;td&gt;best tested under this budget&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;0.1&lt;/td&gt;&lt;td&gt;1.10e26&lt;/td&gt;&lt;td&gt;unstable&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Too small&lt;/b&gt;&lt;p&gt;Moves in the right direction but may run out of steps before reaching the target quality.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Too large&lt;/b&gt;&lt;p&gt;Overshoots, oscillates, or diverges because every update is oversized.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Steps at LR 0.001&lt;/th&gt;&lt;th&gt;Training loss&lt;/th&gt;&lt;th&gt;Relative compute&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;20&lt;/td&gt;&lt;td&gt;9.77733&lt;/td&gt;&lt;td&gt;1×&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;200&lt;/td&gt;&lt;td&gt;0.10553&lt;/td&gt;&lt;td&gt;10×&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;2,000&lt;/td&gt;&lt;td&gt;0.07410&lt;/td&gt;&lt;td&gt;100×&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Diminishing returns:&lt;/b&gt; the second 10× compute increase produced a much smaller loss improvement. Choose the cheapest configuration that meets the required validation quality.&lt;/div&gt;`,
     distributed:`
       &lt;div&gt;&lt;h2&gt;Multi-GPU preview — detailed study comes later&lt;/h2&gt;&lt;p&gt;This is orientation only. Tensor parallelism follows Transformer matrix operations; FSDP follows full training-memory accounting.&lt;/p&gt;&lt;/div&gt;
       &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;DDP&lt;/b&gt;&lt;p&gt;Copy the full model on every GPU, split data, then average corresponding gradients.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;FSDP&lt;/b&gt;&lt;p&gt;Shard parameters, gradients, and optimizer state; temporarily gather layer weights when needed.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
