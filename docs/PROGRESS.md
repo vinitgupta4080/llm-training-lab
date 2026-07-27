@@ -6,8 +6,9 @@ This is the authoritative resume point. Update it after every meaningful learnin
 
 - Current module: Module 2 — gradients and optimization
 - Status: in progress
-- Next action: learner explains why `optimizer.step()` leaves `.grad` stored and why the next independent step must clear it
-- Last verified: 2026-07-19; Module 1 complete and 16 automated tests passing
+- Next action: learner explains diminishing returns in the measured 20/200/2,000-step experiment,
+  then begins momentum and optimizer comparison.
+- Last verified: 2026-07-26; training-loop exercise and controlled learning-rate sweep passing
 
 ## Module scoreboard
 
@@ -86,6 +87,14 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
 - Correctly distinguishes tokenizer-training data from evaluation data and explains byte-level
   BPE coverage: evaluation patterns may lack efficient learned merges, but every UTF-8 byte still
   has a base vocabulary ID, so unseen text remains representable without an unknown token.
+- Correctly selected row-vector matrix order for batched prediction:
+  `[B,T,C_in] @ [C_in,C_out] -> [B,T,C_out]`.
+- Correctly explained that backward accumulates into persistent `.grad` storage, while the
+  optimizer reads that storage and updates only the parameters registered with it.
+- Completed the batched matrix-gradient path: shared `[C_in,C_out]` weight, batched prediction,
+  one-token manual check, scalar mean squared loss, and backward into a matching gradient matrix.
+- Completed one SGD update and correctly recomputed the forward prediction and mean squared loss
+  using the updated in-place weight.
 
 ### Needs reinforcement
 
@@ -514,6 +523,47 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
 - Next: learner explains why DDP does not reduce per-GPU model-state memory, then returns to the
   single-GPU optimizer exercise.
 
+### 2026-07-26 — First complete multi-step training loop
+
+- Learner completed the five operations repeated during training: clear gradients, calculate
+  predictions, calculate scalar mean loss, backpropagate, and update the weight.
+- Verified the 20-step loop: loss decreased from `70.500000` to `0.105712`.
+- Corrected an overly strict scaffold assertion that expected the ideal weight after only 20 SGD
+  steps; the exercise now checks the intended measurable outcome, a substantial loss reduction.
+- Next: inspect the loss trajectory and experiment with learning rate and step count.
+
+### 2026-07-26 — Controlled learning-rate sweep
+
+- Added `labs/02_autograd/learning_rate_sweep.py` and tested five SGD learning rates under an
+  identical initialization, dataset, optimizer, dtype, and 20-step budget.
+- Measured slow learning at `0.0001` and `0.001`, effective learning at `0.01` and `0.03`, and
+  divergence at `0.1`; among tested rates, `0.03` had the lowest validation loss after 20 steps.
+- Recorded the experiment design, falsifier, competing explanation, measurements, and limitations
+  in `experiments/2026-07-26_learning-rate-sweep.md`.
+- Added the `learning-rate-experiment.html` revision visual covering update scale, loss curves,
+  and slow/effective/unstable regimes.
+- Next: learner interprets why “best” is conditional on the tested rates, validation metric, and
+  fixed compute budget; then vary only the number of training steps.
+
+### 2026-07-26 — Production learning-rate selection mental model
+
+- Learner correctly explained that a small learning rate can move in the right direction yet fail
+  to reach the minimum under a fixed compute budget.
+- Added `company-learning-rate-workflow.html`, covering prior recipes, cheap pilot sweeps,
+  validation-based selection under equal budgets, and full-run stability monitoring.
+- Next: vary only training-step count to demonstrate that the best rate under 20 steps can change
+  when the compute budget changes.
+
+### 2026-07-26 — Step-budget and diminishing-returns experiment
+
+- Held learning rate at `0.001` while varying only the budget across 20, 200, and 2,000 steps.
+- Measured monotonically decreasing training loss: `9.77733`, `0.105527`, and `0.074096`.
+- Corrected a cold-start timing artifact by adding warm-up and reporting the median of five runs;
+  measured time scaled approximately 1×, 10×, and 100× with optimizer-step count.
+- Added `labs/02_autograd/step_budget_experiment.py` and
+  `experiments/2026-07-26_step-budget.md`.
+- Next: learner interprets diminishing returns, then compares plain SGD with momentum.
+
 ### 2026-07-26 — Public revision site caught up
 
 - Corrected the public revision gap: Module 2 concepts had individual conversation visuals and
@@ -524,6 +574,14 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
   Module 2 hub.
 - Next: resume the single-GPU optimizer exercise; FSDP and tensor-parallel implementation remain
   deliberately deferred to their later systems modules.
+
+### 2026-07-26 — Multi-step training-loop exercise prepared
+
+- Converted the completed one-step matrix-gradient calculation into a 20-step learner-owned
+  training loop using the same transparent `[B,T,C]` data and shared weight matrix.
+- The loop separates persistent state (weight and optimizer) from per-step state (graph, loss,
+  activations, and fresh gradient) and records a loss trajectory.
+- Next: learner implements `zero_grad`, then forward, loss, backward, and optimizer step.
 - Added assertions using byte IDs for `banana`.
 - Next: implement pair counting and proceed one failing assertion at a time.
 
