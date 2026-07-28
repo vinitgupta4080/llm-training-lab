@@ -690,6 +690,10 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
 - Expanded `module-02-revision-hub.html` and `revision/module-02-revision.html` with a single
   signal-stability reference table, forward/backward flow, equations, edge cases, and the reason
   each mechanism exists.
+- Expanded the signal-stability reference with complete beginner-level math, symbol definitions,
+  and worked examples for Xavier variance/standard deviation, LayerNorm mean/variance and learned
+  affine transform, residual forward/backward paths, global-norm gradient clipping, and
+  learning-rate-scaled parameter movement.
 - Next: begin numerical stability with a controlled overflow experiment, then derive stable
   softmax by subtracting the maximum logit.
 
