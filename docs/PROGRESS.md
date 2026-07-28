@@ -566,6 +566,133 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
   comparison, and diminishing-returns decision rule for GitHub Pages.
 - Next: learner interprets diminishing returns, then compares plain SGD with momentum.
 
+### 2026-07-26 — Momentum mental model
+
+- Introduced momentum as an exponentially retained history of first-order gradients, not a second
+  derivative; learner recognized that momentum can still oscillate.
+- Explained acceleration when gradients agree, partial cancellation when gradients alternate,
+  and overshooting when retained velocity, momentum, or learning rate is too large.
+- Connected momentum to learning-rate schedules: large productive movement early, smaller and more
+  precise updates later, with warmup as the complementary early-training mechanism.
+- Added `momentum-step-calculator.html` for stepping through agreeing and alternating gradient
+  sequences at momentum `0.9`.
+- Implemented `labs/02_autograd/momentum_equivalence_exercise.py`; the learner-created manual
+  velocity and weight updates exactly match PyTorch SGD momentum across two vector gradients.
+- Verified final velocity `[15.0, 11.2]`, final weight `[0.75, 1.808]`, and all 16 tests passing.
+- Clarified that coordinates such as `x` and `y` in a toy loss surface represent two trainable
+  parameters, while the earlier MSE reduces errors over batches/tokens/outputs to a scalar function
+  of every weight; added `two-parameter-loss-surface.html` to make the mapping explicit.
+- Next: learner connects `L(x,y)=x²+50y²` to two squared-error contributions, then compares plain
+  SGD and momentum on its steep and shallow parameter directions.
+
+### 2026-07-27 — Momentum hypothesis falsified at aggressive learning rate
+
+- Learner derived gradients `[10,500]` at `[x,y]=[5,5]` and traced steep-direction SGD oscillation
+  `5 → -4 → 3.2` at learning rate `0.018`.
+- Added `labs/02_autograd/sgd_momentum_zigzag.py` and
+  `experiments/2026-07-27_sgd-vs-momentum.md`.
+- Under the identical 50-step, LR `0.018` budget, plain SGD reached loss `0.687844`, while momentum
+  reached `12.047579`; the original “momentum will be lower” hypothesis was falsified because
+  retained velocity amplified overshooting.
+- Verified optimizer state: plain SGD stored zero state elements and momentum stored two, matching
+  the two-parameter vector.
+- Learner correctly explained that LR `0.018` plus retained velocity repeatedly overshot the
+  minimum, then predicted momentum would win at the safer shared LR `0.005`.
+- Replication confirmed the prediction: at LR `0.005`, plain SGD ended at loss `9.336602` and
+  momentum ended at `1.775322` after the same 50 steps.
+- Introduced Adam's purpose: the first moment smooths direction, while the second moment tracks
+  squared-gradient scale so each parameter receives an adaptive effective step size.
+- Added `adam-adaptive-scaling.html`, mapping the steep/shallow gradient `[10,500]` to raw SGD
+  scaling versus approximate Adam normalization `[1,1]`.
+- Learner manually calculated the first Adam state for `g=10`: raw `m=1`, raw `v=0.1`,
+  bias-corrected `m̂=10`, and `v̂=100`, while choosing to retain the compact mental model rather
+  than memorize every formula.
+- Added and verified `labs/02_autograd/adam_state_inspection.py`; PyTorch stored `exp_avg=[1]`,
+  `exp_avg_sq=[0.1]`, step `1`, and updated weight `5 → 4.999`, matching the manual derivation.
+- Learner predicted momentum would win a same-LR comparison while correctly warning that optimizer
+  ranking depends on many controlled variables.
+- Added `labs/02_autograd/optimizer_comparison.py` and
+  `experiments/2026-07-27_optimizer-comparison.md`: at LR `0.005` after 50 updates, losses were
+  plain SGD `9.150803`, momentum `6.317387`, and Adam `1151.427368`.
+- Verified optimizer-state elements for the two-parameter model: plain SGD `0`, momentum `2`, Adam
+  `4`; Adam's poor result reflects a mismatched shared numeric LR, not universal inferiority.
+- Added `labs/02_autograd/tuned_optimizer_comparison.py` and
+  `experiments/2026-07-27_tuned-optimizer-comparison.md`; expanded ranges when initial winners
+  appeared at boundaries.
+- Under equal 50-step final-run budgets, best tested results were plain SGD LR `0.019`, loss
+  `0.552536`; momentum LR `0.017`, loss `0.303671`; Adam LR `0.5`, loss `0.029599`.
+- Introduced AdamW as Adam's two adaptive state tensors plus a separate direct shrinkage of weights;
+  clarified that Adam's first moment already fills the momentum role.
+- Added `weight-decay-sensitivity.html` to connect weight magnitude with output sensitivity through
+  `Δoutput = weight × Δinput`, while emphasizing that large weights are not automatically wrong.
+- Learner correctly calculated the isolated AdamW decay update:
+  `10 × (1 - 0.1 × 0.01) = 9.99`, and distinguished the Adam gradient update from the
+  separate decoupled weight-decay update.
+- Reinforced that a weight, its gradient, Adam's first/second-moment state, and its update all
+  share the weight's shape, while their element values generally differ.
+- Added `adamw-zero-gradient.html`, an interactive comparison of a zero gradient tensor versus
+  `grad=None`; the former permits the AdamW decay step while PyTorch skips the parameter for the
+  latter.
+- Learner derived the nonzero-gradient AdamW examples: with `w=10`, LR `0.1`, decay `0.01`,
+  the task gradient toward target `8` and decay both reduce the weight to `9.89`; toward target
+  `12`, the task update and decay oppose each other and produce `10.09`.
+- Clarified that longer training does not cancel weight decay: decay acts every step and an
+  excessive value can bias the equilibrium toward weights that are too small, causing underfit.
+- Expanded the Module 2 revision hub with detailed SGD, momentum, Adam, AdamW, optimizer-state
+  memory, edge cases, measured same-LR and tuned comparisons, search cost, and fair-selection
+  criteria.
+- Learner reconstructed the repeated AdamW loop in the correct conceptual order
+  (clear → forward → backward → update), needing only the exact `zero_grad` syntax.
+- Added `labs/02_autograd/weight_decay_sweep.py` and
+  `experiments/2026-07-27_weight-decay-sweep.md`.
+- The controlled sweep held data, initialization, LR, and 1,000-step budget fixed. Validation
+  loss improved from `0.775838` at decay `0` to `0.729880` at decay `0.1`, while training loss
+  slightly worsened; expanding the boundary to decay `1.0` raised validation loss to `2.274466`
+  and training loss to `1.236641`, demonstrating underfit.
+- Search cost was five candidates × 1,000 updates = 5,000 optimizer updates, or 5× one final
+  run. The single-seed toy result does not select a universal LLM decay value.
+- Learner correctly explained the decay tradeoff: aggressive decay also shrinks useful weights,
+  so moderate decay may remove more noise than signal while excessive decay causes underfit.
+- Learner derived global norm clipping for gradient `[30,40]`: original norm `50`, scale factor
+  `1/50`, clipped gradient `[0.6,0.8]`, and preserved direction.
+- Added `labs/02_autograd/gradient_clipping_spike.py` and
+  `experiments/2026-07-27_gradient-clipping-spike.md`.
+- Learner predicted the unclipped run would make the larger parameter jump. At the controlled
+  extreme batch both pre-clip norms were `13107.2`; the unclipped update was `1310.72`, while
+  clipping to norm `10` limited the update to `1.0`. The next normal loss was approximately
+  `1.716M` unclipped versus `0.1188` clipped.
+- Learner explained clipping as a guardrail that preserves direction and limits one poor batch
+  from moving the model far from a useful minimum, while leaving the bad-data or instability
+  cause unresolved.
+- Introduced layer shape composition: `[...C_in] @ [C_in,C_out] -> [...C_out]`; adjacent
+  dimensions must match, but internal matrices are square only when the designer preserves width.
+- Learner recognized the architecture/cost tradeoff: more parameters increase capacity and
+  training memory, but quality also requires sufficient data, compute, optimization, and design.
+- Added `labs/02_autograd/initialization_scale_experiment.py` and
+  `experiments/2026-07-27_initialization-scale.md`.
+- Learner predicted shrink/stable/grow for `0.1×/1×/10×` fan-in initialization. At layer 20,
+  activation stds were approximately `1.11e-20`, `1.11`, and `1.11e20`; first-weight gradient
+  norms were `0`, `2.23`, and `inf`, respectively.
+- Learner connected increased fan-in with overflow risk and learned that a `[C_in,C_out]`
+  matrix has fan-in `C_in` and fan-out `C_out`; fan-in controls how many forward contributions
+  enter each output, while fan-out controls how many backward contributions return to each input.
+- Added `fan-in-fan-out.html`, an interactive forward/backward connection view for a `[3,2]`
+  weight matrix.
+- Learner calculated Xavier variance `0.4` and standard deviation approximately `0.632` for a
+  `[3,2]` rectangular matrix and explained that initialization prevents the signal from fading
+  or exploding at the start.
+- Distinguished Xavier initialization (starting weight scale), LayerNorm (hidden-activation
+  scale on every forward pass), residual connections (direct signal/gradient path), gradient
+  clipping (abnormal-gradient guardrail), and learning-rate control (parameter-update size).
+- Learner correctly reasoned that a zero weight passes no signal through that connection, while
+  a zero weight together with a zero gradient remains unchanged; one inactive connection does
+  not imply that an entire output dimension is inactive.
+- Expanded `module-02-revision-hub.html` and `revision/module-02-revision.html` with a single
+  signal-stability reference table, forward/backward flow, equations, edge cases, and the reason
+  each mechanism exists.
+- Next: begin numerical stability with a controlled overflow experiment, then derive stable
+  softmax by subtracting the maximum logit.
+
 ### 2026-07-26 — Public revision site caught up
 
 - Corrected the public revision gap: Module 2 concepts had individual conversation visuals and
