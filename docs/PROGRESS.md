@@ -694,8 +694,30 @@ Status vocabulary: `Not started`, `Scaffolded`, `In progress`, `Blocked`, `Compl
   and worked examples for Xavier variance/standard deviation, LayerNorm mean/variance and learned
   affine transform, residual forward/backward paths, global-norm gradient clipping, and
   learning-rate-scaled parameter movement.
-- Next: begin numerical stability with a controlled overflow experiment, then derive stable
-  softmax by subtracting the maximum logit.
+- A premature softmax preview exposed concepts from the future language-modeling module; learner
+  correctly flagged the prerequisite jump. Softmax, vocabulary scores, and sampling are deferred
+  until the course constructs that prediction problem.
+- Began numerical stability using only the known scalar training path
+  `prediction=input*weight`, squared-error loss, backward, and an optimizer update.
+- Learner explained why the special case `input=1, target=0` reduces the loss to `weight²` and
+  why `backward()` calculates `d(loss)/d(weight)` into `weight.grad`.
+- Learner correctly predicted that `weight=1e20` produces an infinite float32 loss but a finite
+  `2e20` gradient, and learned that `optimizer.step()` does not inspect the loss or automatically
+  reject non-finite gradients.
+- Added `labs/02_autograd/numerical_range_experiment.py`,
+  `experiments/2026-07-28_numerical-range.md`, and `numerical-range-training.html` to compare
+  underflow, ordinary range, and overflow at each forward/backward checkpoint.
+- Learner independently implemented the reusable finite loss/gradient guard, including
+  `grad is None` handling and elementwise `.all()` reduction, and correctly identified weights,
+  biases, and normalization affine tensors as parameters.
+- Connected data normalization, temporary/dynamic loss scaling, gradient unscaling, clipping,
+  learning rate, dtype range, and dtype precision. Learner correctly challenged whether scaling
+  alone permits arbitrarily low precision; concluded that scaling helps range but cannot recover
+  distinctions or updates lost to rounding.
+- Consolidated the measured cases, equations, safety guard, correct operation order, and
+  range-versus-precision tradeoffs under a new Numerical range topic in the Module 2 revision hub.
+- Next: run a controlled float16/bfloat16/float32 range-and-rounding experiment, then decide which
+  tensors need higher precision before the Module 2 checkpoint.
 
 ### 2026-07-26 — Public revision site caught up
 
