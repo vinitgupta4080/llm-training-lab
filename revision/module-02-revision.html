@@ -762,6 +762,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;comparison&quot; aria-pressed=&quot;false&quot;&gt;Compare&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;learningrate&quot; aria-pressed=&quot;false&quot;&gt;Learning rate&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;stability&quot; aria-pressed=&quot;false&quot;&gt;Signal stability&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;numerical&quot; aria-pressed=&quot;false&quot;&gt;Numerical range&lt;/button&gt;
     &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-topic=&quot;distributed&quot; aria-pressed=&quot;false&quot;&gt;GPU preview&lt;/button&gt;
   &lt;/div&gt;
   &lt;section class=&quot;lesson&quot; aria-live=&quot;polite&quot;&gt;&lt;/section&gt;
@@ -934,6 +935,33 @@ optimizer.step()&lt;/code&gt;&lt;/pre&gt;
       &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;LayerNorm acts on activations&lt;/b&gt;&lt;p&gt;First calculate &lt;code&gt;h=x@W+b&lt;/code&gt;, then normalize hidden state &lt;code&gt;h&lt;/code&gt;. Standard LayerNorm does not normalize weight matrix &lt;code&gt;W&lt;/code&gt;.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Zero is not automatically bad&lt;/b&gt;&lt;p&gt;One zero weight removes one connection’s contribution. If both &lt;code&gt;w=0&lt;/code&gt; and &lt;code&gt;∂L/∂w=0&lt;/code&gt;, then &lt;code&gt;w_new=0−η·0=0&lt;/code&gt;; the connection remains inactive.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
       &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Symbols:&lt;/b&gt; &lt;code&gt;h&lt;/code&gt; hidden activation; &lt;code&gt;μ&lt;/code&gt; mean; &lt;code&gt;σ²&lt;/code&gt; variance; &lt;code&gt;ε&lt;/code&gt; small divide-by-zero guard; &lt;code&gt;γ,β&lt;/code&gt; learned LayerNorm scale and shift; &lt;code&gt;F&lt;/code&gt; learned layer; &lt;code&gt;J_F&lt;/code&gt; its Jacobian; &lt;code&gt;g&lt;/code&gt; gradient; &lt;code&gt;τ&lt;/code&gt; clipping threshold; &lt;code&gt;θ&lt;/code&gt; parameters; &lt;code&gt;η&lt;/code&gt; learning rate.&lt;/div&gt;
       &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Key distinction:&lt;/b&gt; initialization creates a healthy starting scale; normalization and residual paths help throughout the network; clipping and learning-rate control protect parameter updates. These mechanisms cooperate but do different jobs.&lt;/div&gt;`,
+    numerical:`
+      &lt;div&gt;&lt;h2&gt;Numerical range during training&lt;/h2&gt;&lt;p&gt;A mathematically valid intermediate result can exceed a dtype’s range or become too small to represent. Inspect forward values, loss, gradients, and parameters separately.&lt;/p&gt;&lt;/div&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;float32 case for L=w²&lt;/th&gt;&lt;th&gt;Prediction&lt;/th&gt;&lt;th&gt;Stored loss&lt;/th&gt;&lt;th&gt;Stored gradient 2w&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;&lt;code&gt;w=1e−30&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;1e−30&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;0&lt;/code&gt; from underflow&lt;/td&gt;&lt;td&gt;&lt;code&gt;2e−30&lt;/code&gt;, finite&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;&lt;code&gt;w=3&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;3&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;9&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;6&lt;/code&gt;&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;&lt;code&gt;w=1e20&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;1e20&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;inf&lt;/code&gt; from overflow&lt;/td&gt;&lt;td&gt;&lt;code&gt;2e20&lt;/code&gt;, finite&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Overflow&lt;/b&gt;&lt;p&gt;A result larger than the dtype maximum becomes &lt;code&gt;inf&lt;/code&gt;. Undefined operations such as &lt;code&gt;inf−inf&lt;/code&gt;, &lt;code&gt;0×inf&lt;/code&gt;, or &lt;code&gt;inf/inf&lt;/code&gt; produce &lt;code&gt;NaN&lt;/code&gt;.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;Underflow&lt;/b&gt;&lt;p&gt;A tiny nonzero result may become &lt;code&gt;0&lt;/code&gt;. Because zero is finite, &lt;code&gt;isfinite()&lt;/code&gt; cannot distinguish expected zero from silent underflow.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;equation&quot;&gt;&lt;code&gt;For L=w²: finite loss requires |w| ≤ √dtype_max&lt;/code&gt;&lt;br&gt;&lt;code&gt;float32 boundary ≈ √(3.4e38) ≈ 1.84e19&lt;/code&gt;&lt;/div&gt;
+      &lt;pre&gt;&lt;code&gt;def gradients_are_safe(loss, parameters):
+    if not torch.isfinite(loss):
+        return False
+    for parameter in parameters:
+        if parameter.grad is None:
+            continue
+        if not torch.isfinite(parameter.grad).all():
+            return False
+    return True&lt;/code&gt;&lt;/pre&gt;
+      &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Optimizer behavior:&lt;/b&gt; &lt;code&gt;optimizer.step()&lt;/code&gt; reads parameters and their gradients; it does not inspect the loss and plain optimizers need not reject &lt;code&gt;inf&lt;/code&gt; or &lt;code&gt;NaN&lt;/code&gt; automatically.&lt;/div&gt;
+      &lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Technique&lt;/th&gt;&lt;th&gt;What it changes&lt;/th&gt;&lt;th&gt;Main limitation&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;Data normalization&lt;/td&gt;&lt;td&gt;Fixed training-data units; use the same saved scale for validation and inference&lt;/td&gt;&lt;td&gt;Scaling too aggressively can erase small values; internal layers can still grow&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Temporary loss scaling&lt;/td&gt;&lt;td&gt;Multiplies the loss so low-precision backward gradients are larger, then unscales before use&lt;/td&gt;&lt;td&gt;Does not repair forward overflow and must be reversed before checking, clipping, or updating&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Higher precision&lt;/td&gt;&lt;td&gt;Provides more range and/or finer representable spacing&lt;/td&gt;&lt;td&gt;Costs more memory and may reduce throughput&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Mixed precision&lt;/td&gt;&lt;td&gt;Uses low precision for suitable work and higher precision for sensitive state/operations&lt;/td&gt;&lt;td&gt;Requires correct casting, unscaling, accumulation, and finite checks&lt;/td&gt;&lt;/tr&gt;
+      &lt;/tbody&gt;&lt;/table&gt;
+      &lt;div class=&quot;flow&quot;&gt;&lt;span class=&quot;node&quot;&gt;normalize data&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;forward&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;scale loss if needed&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;backward&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;unscale&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;finite check&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;clip&lt;/span&gt;&lt;span&gt;→&lt;/span&gt;&lt;span class=&quot;node&quot;&gt;optimizer step&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;check&quot;&gt;&lt;b&gt;Range versus precision:&lt;/b&gt; scaling can move values into range, but it cannot restore distinctions already lost to rounding. The cheapest safe dtype may differ for matrix inputs, activations, accumulation, weights, gradients, and optimizer state.&lt;/div&gt;`,
     distributed:`
       &lt;div&gt;&lt;h2&gt;Multi-GPU preview — detailed study comes later&lt;/h2&gt;&lt;p&gt;This is orientation only. Tensor parallelism follows Transformer matrix operations; FSDP follows full training-memory accounting.&lt;/p&gt;&lt;/div&gt;
       &lt;div class=&quot;two&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;DDP&lt;/b&gt;&lt;p&gt;Copy the full model on every GPU, split data, then average corresponding gradients.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;card&quot;&gt;&lt;b&gt;FSDP&lt;/b&gt;&lt;p&gt;Shard parameters, gradients, and optimizer state; temporarily gather layer weights when needed.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
