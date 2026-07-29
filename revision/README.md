@@ -8,7 +8,8 @@ and remain available in the public repository. Open an HTML file directly in a b
   ordered encoding, reverse decoding, multilingual behavior, measured cost scaling, and self-checks
 - `module-02-revision.html`: current gradients, autograd, batch loss, accumulation, optimizers,
   clipping, initialization, normalization, residual paths, signal stability, training-memory
-  lifetime, and a labeled distributed-training preview
+  lifetime, numerical range, finite guards, mixed-precision principles, and a labeled
+  distributed-training preview
 - `tokenizer-tradeoff-simulator.html`: adjustable vocabulary, hidden-width, and sequence cost model
 - `bpe-tradeoff-beginner.html`: prerequisite-free dictionary-shortcuts versus text-pieces view
 
